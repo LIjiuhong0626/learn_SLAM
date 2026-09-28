@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
   Matrix<float, 3, 1> vd_3d;
 
   // Matrix3d 实质上是 Eigen::Matrix<double, 3, 3>
-  Matrix3d matrix_33 = Matrix3d::Zero(); //初始化为零
+  Matrix3d matrix_33 = Matrix3d::Zero(); //初始化为零          matrix_33 如果只写 Matrix3d matrix_33; 而不初始化，元素是未定义的垃圾值
   // 如果不确定矩阵大小，可以使用动态大小的矩阵
   Matrix<double, Dynamic, Dynamic> matrix_dynamic;
   // 更简单的
