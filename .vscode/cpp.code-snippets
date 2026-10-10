@@ -1,0 +1,13 @@
+{
+    "Eigen Quaterniond type": {
+        "scope": "cpp",
+        "prefix": [
+            "quat",
+            "quar"
+        ],
+        "body": [
+            "Eigen::Quaterniond"
+        ],
+        "description": "插入 Eigen 的双精度四元数类型"
+    }
+}
