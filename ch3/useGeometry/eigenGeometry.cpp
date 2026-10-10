@@ -18,8 +18,12 @@ int main(int argc, char **argv) {
   // 旋转向量使用 AngleAxis, 它底层不直接是Matrix，但运算可以当作矩阵（因为重载了运算符）
   AngleAxisd rotation_vector(M_PI / 4, Vector3d(0, 0, 1));     //沿 Z 轴旋转 45 度
   cout.precision(3);
+
+  // cout << "rotation vector =\n" << rotation_vector << endl;   // rv 不可以直接输出
   cout << "rotation matrix =\n" << rotation_vector.matrix() << endl;   //用matrix()转换成矩阵
+
   // 也可以直接赋值
+  rotation_matrix = rotation_vector.matrix();
   rotation_matrix = rotation_vector.toRotationMatrix();
   // 用 AngleAxis 可以进行坐标变换
   Vector3d v(1, 0, 0);
@@ -35,6 +39,7 @@ int main(int argc, char **argv) {
 
   // 欧氏变换矩阵使用 Eigen::Isometry
   Isometry3d T = Isometry3d::Identity();                // 虽然称为3d，实质上是4＊4的矩阵
+  T.rotate(rotation_matrix);                                     // 按照rotation_matrix进行旋转
   T.rotate(rotation_vector);                                     // 按照rotation_vector进行旋转
   T.pretranslate(Vector3d(1, 3, 4));                     // 把平移向量设成(1,3,4)
   cout << "Transform matrix = \n" << T.matrix() << endl;
@@ -51,6 +56,7 @@ int main(int argc, char **argv) {
   cout << "quaternion from rotation vector = " << q.coeffs().transpose()
        << endl;   // 请注意coeffs的顺序是(x,y,z,w),w为实部，前三者为虚部
   // 也可以把旋转矩阵赋给它
+  // 但是构造的时候也可以用 Quaterniond q(w, x, y, z); 此时就是 w 在前了
   q = Quaterniond(rotation_matrix);
   cout << "quaternion from rotation matrix = " << q.coeffs().transpose() << endl;
   // 使用四元数旋转一个向量，使用重载的乘法即可
