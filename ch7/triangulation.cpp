@@ -1,6 +1,5 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
-// #include "extra.h" // used in opencv2
 using namespace std;
 using namespace cv;
 
@@ -41,8 +40,9 @@ int main(int argc, char **argv) {
     return 1;
   }
   //-- 读取图像
-  Mat img_1 = imread(argv[1], CV_LOAD_IMAGE_COLOR);
-  Mat img_2 = imread(argv[2], CV_LOAD_IMAGE_COLOR);
+  // OpenCV 4 使用带命名空间的读取模式枚举；读取彩色图像的行为与旧宏一致。
+  Mat img_1 = imread(argv[1], cv::IMREAD_COLOR);
+  Mat img_2 = imread(argv[2], cv::IMREAD_COLOR);
 
   vector<KeyPoint> keypoints_1, keypoints_2;
   vector<DMatch> matches;
@@ -86,12 +86,9 @@ void find_feature_matches(const Mat &img_1, const Mat &img_2,
                           std::vector<DMatch> &matches) {
   //-- 初始化
   Mat descriptors_1, descriptors_2;
-  // used in OpenCV3
+  // OpenCV 4 继续使用工厂函数创建 ORB，特征提取与匹配流程不变。
   Ptr<FeatureDetector> detector = ORB::create();
   Ptr<DescriptorExtractor> descriptor = ORB::create();
-  // use this if you are in OpenCV2
-  // Ptr<FeatureDetector> detector = FeatureDetector::create ( "ORB" );
-  // Ptr<DescriptorExtractor> descriptor = DescriptorExtractor::create ( "ORB" );
   Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce-Hamming");
   //-- 第一步:检测 Oriented FAST 角点位置
   detector->detect(img_1, keypoints_1);

@@ -3,8 +3,8 @@
 
 using namespace std;
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
 #include <Eigen/Geometry>
 #include <boost/format.hpp>  // for formating strings
 #include <pcl/point_types.h>

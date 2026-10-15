@@ -291,8 +291,9 @@ bool Frontend::StereoInit() {
 int Frontend::DetectFeatures() {
     cv::Mat mask(current_frame_->left_img_.size(), CV_8UC1, 255);
     for (auto &feat : current_frame_->features_left_) {
+        // cv::FILLED 是 OpenCV 4 中旧 CV_FILLED 宏对应的命名空间枚举。
         cv::rectangle(mask, feat->position_.pt - cv::Point2f(10, 10),
-                      feat->position_.pt + cv::Point2f(10, 10), 0, CV_FILLED);
+                      feat->position_.pt + cv::Point2f(10, 10), 0, cv::FILLED);
     }
 
     std::vector<cv::KeyPoint> keypoints;

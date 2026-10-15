@@ -7,8 +7,8 @@ set(CMAKE_CXX_FLAGS "-std=c++11 -march=native -O3")
 ############### dependencies ######################
 # Eigen
 include_directories("/usr/include/eigen3")
-# OpenCV
-find_package(OpenCV 3.1 REQUIRED)
+# 教学代码统一使用 OpenCV 4，单目稠密重建流程保持不变。
+find_package(OpenCV 4 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 # Sophus
 find_package(Sophus REQUIRED)

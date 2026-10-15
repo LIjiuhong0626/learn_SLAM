@@ -8,7 +8,7 @@
 #include <g2o/core/optimization_algorithm_dogleg.h>
 #include <g2o/solvers/dense/linear_solver_dense.h>
 #include <Eigen/Core>
-#include <opencv2/core/core.hpp>
+#include <opencv2/core.hpp>
 #include <cmath>
 #include <chrono>
 

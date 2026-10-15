@@ -6,8 +6,8 @@ set(CMAKE_CXX_FLAGS "-std=c++14 -O3")
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-# OpenCV
-find_package(OpenCV REQUIRED)
+# 教学代码统一使用 OpenCV 4，避免 CMake 回退到旧版 OpenCV。
+find_package(OpenCV 4 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Ceres

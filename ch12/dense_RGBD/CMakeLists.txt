@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_FLAGS "-std=c++11 -O2")
 
-# opencv 
-find_package(OpenCV REQUIRED)
+# 教学代码统一使用 OpenCV 4，其他点云处理依赖保持不变。
+find_package(OpenCV 4 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # eigen 

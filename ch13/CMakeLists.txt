@@ -14,8 +14,8 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 # Eigen
 include_directories("/usr/include/eigen3")
 
-# OpenCV
-find_package(OpenCV 3.1 REQUIRED)
+# 教学代码统一使用 OpenCV 4，前端与后端算法依赖保持不变。
+find_package(OpenCV 4 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # pangolin

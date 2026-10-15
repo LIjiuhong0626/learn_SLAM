@@ -203,7 +203,8 @@ void DirectPoseEstimationSingleLayer(
 
     // plot the projected pixels here
     cv::Mat img2_show;
-    cv::cvtColor(img2, img2_show, CV_GRAY2BGR);
+    // OpenCV 4 使用带命名空间的颜色转换枚举；灰度转 BGR 的处理不变。
+    cv::cvtColor(img2, img2_show, cv::COLOR_GRAY2BGR);
     VecVector2d projection = jaco_accu.projected_points();
     for (size_t i = 0; i < px_ref.size(); ++i) {
         auto p_ref = px_ref[i];

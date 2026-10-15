@@ -1,4 +1,5 @@
-find_package(OpenCV REQUIRED)
+# 与第 5 章顶层配置保持一致，只使用 OpenCV 4。
+find_package(OpenCV 4 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories("/usr/include/eigen3")
 

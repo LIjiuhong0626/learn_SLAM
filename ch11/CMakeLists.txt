@@ -4,8 +4,8 @@ project( loop_closure )
 set( CMAKE_BUILD_TYPE "Release" )
 set( CMAKE_CXX_FLAGS "-std=c++11 -O3" )
 
-# opencv 
-find_package( OpenCV 3.1 REQUIRED )
+# 教学代码统一使用 OpenCV 4，避免 CMake 选择旧版 OpenCV。
+find_package( OpenCV 4 REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 # dbow3 

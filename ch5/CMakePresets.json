@@ -1,0 +1,30 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "opencv4",
+      "displayName": "Release with OpenCV 4",
+      "description": "Build chapter 5 against OpenCV 4; CMake discovers the system installation.",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/opencv4",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "environment": {
+        "CCACHE_DIR": "${sourceDir}/build/.ccache"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "opencv4",
+      "configurePreset": "opencv4",
+      "jobs": 4
+    }
+  ]
+}

@@ -1,9 +1,8 @@
 #include <iostream>
-#include <opencv2/core/core.hpp>
-#include <opencv2/features2d/features2d.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/calib3d/calib3d.hpp>
-// #include "extra.h" // use this if in OpenCV2
+#include <opencv2/core.hpp>
+#include <opencv2/features2d.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/calib3d.hpp>
 
 using namespace std;
 using namespace cv;
@@ -33,8 +32,9 @@ int main(int argc, char **argv) {
     return 1;
   }
   //-- 读取图像
-  Mat img_1 = imread(argv[1], CV_LOAD_IMAGE_COLOR);
-  Mat img_2 = imread(argv[2], CV_LOAD_IMAGE_COLOR);
+  // OpenCV 4 使用带命名空间的读取模式枚举；读取彩色图像的行为与旧宏一致。
+  Mat img_1 = imread(argv[1], cv::IMREAD_COLOR);
+  Mat img_2 = imread(argv[2], cv::IMREAD_COLOR);
   assert(img_1.data && img_2.data && "Can not load images!");
 
   vector<KeyPoint> keypoints_1, keypoints_2;
@@ -73,12 +73,9 @@ void find_feature_matches(const Mat &img_1, const Mat &img_2,
                           std::vector<DMatch> &matches) {
   //-- 初始化
   Mat descriptors_1, descriptors_2;
-  // used in OpenCV3
+  // OpenCV 4 继续使用工厂函数创建 ORB，特征提取与匹配流程不变。
   Ptr<FeatureDetector> detector = ORB::create();
   Ptr<DescriptorExtractor> descriptor = ORB::create();
-  // use this if you are in OpenCV2
-  // Ptr<FeatureDetector> detector = FeatureDetector::create ( "ORB" );
-  // Ptr<DescriptorExtractor> descriptor = DescriptorExtractor::create ( "ORB" );
   Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce-Hamming");
   //-- 第一步:检测 Oriented FAST 角点位置
   detector->detect(img_1, keypoints_1);
@@ -140,7 +137,8 @@ void pose_estimation_2d2d(std::vector<KeyPoint> keypoints_1,
 
   //-- 计算基础矩阵
   Mat fundamental_matrix;
-  fundamental_matrix = findFundamentalMat(points1, points2, CV_FM_8POINT);
+  // OpenCV 4 将八点法常量放入 cv 命名空间，算法仍为原来的八点法。
+  fundamental_matrix = findFundamentalMat(points1, points2, cv::FM_8POINT);
   cout << "fundamental_matrix is " << endl << fundamental_matrix << endl;
 
   //-- 计算本质矩阵
