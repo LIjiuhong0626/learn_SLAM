@@ -10,11 +10,15 @@
 using namespace std;
 
 // global variables
-string first_file = "./1.png";
-string second_file = "./2.png";
+// string first_file = "./1.png";
+// string second_file = "./2.png";
+
+// global variables
+string first_file = "./test_1.jpg";
+string second_file = "./test_2.jpg";
 
 // 32 bit unsigned int, will have 8, 8x32=256
-typedef vector<uint32_t> DescType; // Descriptor type
+typedef vector<uint32_t> DescType; // Descriptor type， 刚好 256 位
 
 /**
  * compute descriptor of orb keypoints
@@ -356,9 +360,9 @@ void ComputeORB(const cv::Mat &img, vector<cv::KeyPoint> &keypoints, vector<Desc
     float m01 = 0, m10 = 0;
     for (int dx = -half_patch_size; dx < half_patch_size; ++dx) {
       for (int dy = -half_patch_size; dy < half_patch_size; ++dy) {
-        uchar pixel = img.at<uchar>(kp.pt.y + dy, kp.pt.x + dx);
+        uchar pixel = img.at<uchar>(kp.pt.y + dy, kp.pt.x + dx); // 这里已经是 灰度图 了
         m01 += dx * pixel;
-        m10 += dy * pixel;
+        m10 += dy * pixel; // 这里可以发现计算的都是相对这个特征点的
       }
     }
 
@@ -368,11 +372,11 @@ void ComputeORB(const cv::Mat &img, vector<cv::KeyPoint> &keypoints, vector<Desc
     float cos_theta = m10 / m_sqrt;
 
     // compute the angle of this point
-    DescType desc(8, 0);
+    DescType desc(8, 0); // 创建 8 个 32 位无符号整数，每个元素初始化为 0, 刚好是 256 位
     for (int i = 0; i < 8; i++) {
       uint32_t d = 0;
       for (int k = 0; k < 32; k++) {
-        int idx_pq = i * 8 + k;
+        int idx_pq = i * 32 + k;
         cv::Point2f p(ORB_pattern[idx_pq * 4], ORB_pattern[idx_pq * 4 + 1]);
         cv::Point2f q(ORB_pattern[idx_pq * 4 + 2], ORB_pattern[idx_pq * 4 + 3]);
 
@@ -399,20 +403,19 @@ void BfMatch(const vector<DescType> &desc1, const vector<DescType> &desc2, vecto
 
   for (size_t i1 = 0; i1 < desc1.size(); ++i1) {
     if (desc1[i1].empty()) continue;
-    cv::DMatch m{i1, 0, 256};
+    cv::DMatch m{i1, 0, 256}; // queryIdx, trainIdx, distance(初始设为最大)
     for (size_t i2 = 0; i2 < desc2.size(); ++i2) {
       if (desc2[i2].empty()) continue;
       int distance = 0;
       for (int k = 0; k < 8; k++) {
         distance += _mm_popcnt_u32(desc1[i1][k] ^ desc2[i2][k]);
       }
-      if (distance < d_max && distance < m.distance) {
+      if (distance < d_max && distance < m.distance) { // 第一个条件检查相似度是否达到阈值；第二个条件检查它是不是目前找到的最佳匹配
         m.distance = distance;
         m.trainIdx = i2;
       }
     }
     if (m.distance < d_max) {
       matches.push_back(m);
-    }
   }
-}
+}}
