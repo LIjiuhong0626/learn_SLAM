@@ -1,29 +1,22 @@
-cmake_minimum_required(VERSION 2.8)
-
-set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_CXX_FLAGS "-std=c++11 -O2")
-
-# 教学代码统一使用 OpenCV 4，其他点云处理依赖保持不变。
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 find_package(OpenCV 4 REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
-
-# eigen 
-include_directories("/usr/include/eigen3/")
-
-# pcl 
-find_package(PCL REQUIRED)
-include_directories(${PCL_INCLUDE_DIRS})
-add_definitions(${PCL_DEFINITIONS})
-
-# octomap 
-find_package(octomap REQUIRED)
-include_directories(${OCTOMAP_INCLUDE_DIRS})
+find_package(PCL REQUIRED COMPONENTS common io filters visualization surface kdtree search)
+find_package(octomap CONFIG REQUIRED)
 
 add_executable(pointcloud_mapping pointcloud_mapping.cpp)
-target_link_libraries(pointcloud_mapping ${OpenCV_LIBS} ${PCL_LIBRARIES})
+target_compile_features(pointcloud_mapping PRIVATE cxx_std_14)
+target_compile_options(pointcloud_mapping PRIVATE -O2 ${PCL_DEFINITIONS})
+target_include_directories(pointcloud_mapping PRIVATE ${OpenCV_INCLUDE_DIRS} ${PCL_INCLUDE_DIRS})
+target_link_libraries(pointcloud_mapping PRIVATE Eigen3::Eigen ${OpenCV_LIBS} ${PCL_LIBRARIES})
 
 add_executable(octomap_mapping octomap_mapping.cpp)
-target_link_libraries(octomap_mapping ${OpenCV_LIBS} ${PCL_LIBRARIES} ${OCTOMAP_LIBRARIES})
+target_compile_features(octomap_mapping PRIVATE cxx_std_14)
+target_compile_options(octomap_mapping PRIVATE -O2)
+target_include_directories(octomap_mapping PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(octomap_mapping PRIVATE Eigen3::Eigen ${OpenCV_LIBS} octomap)
 
 add_executable(surfel_mapping surfel_mapping.cpp)
-target_link_libraries(surfel_mapping ${OpenCV_LIBS} ${PCL_LIBRARIES})
+target_compile_features(surfel_mapping PRIVATE cxx_std_14)
+target_compile_options(surfel_mapping PRIVATE -O2 ${PCL_DEFINITIONS})
+target_include_directories(surfel_mapping PRIVATE ${PCL_INCLUDE_DIRS})
+target_link_libraries(surfel_mapping PRIVATE ${PCL_LIBRARIES})

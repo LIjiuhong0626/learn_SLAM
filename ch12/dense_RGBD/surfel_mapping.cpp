@@ -28,7 +28,7 @@ SurfelCloudPtr reconstructSurface(
     mls.setSearchRadius(radius);
     mls.setComputeNormals(true);
     mls.setSqrGaussParam(radius * radius);
-    mls.setPolynomialFit(polynomial_order > 1);
+    // PCL 1.12 uses order > 1 to enable polynomial fitting.
     mls.setPolynomialOrder(polynomial_order);
     mls.setInputCloud(input);
     SurfelCloudPtr output(new SurfelCloud);

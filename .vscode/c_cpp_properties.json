@@ -4,6 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
+                "${env:HOME}/.local/include",
                 "/usr/include/eigen3",
                 "/usr/include/opencv4",
                 "/usr/local/include"
