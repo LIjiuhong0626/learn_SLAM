@@ -19,15 +19,15 @@ struct PoseAndIntrinsics {
 
     /// set from given data address
     explicit PoseAndIntrinsics(double *data_addr) {
-        rotation = SO3d::exp(Vector3d(data_addr[0], data_addr[1], data_addr[2]));
-        translation = Vector3d(data_addr[3], data_addr[4], data_addr[5]);
+        rotation = SO3d::exp(Vector3d(data_addr[0], data_addr[1], data_addr[2])); // BAL 数据集并不是直接存储旋转矩阵，而是使用旋转向量
+        translation = Vector3d(data_addr[3], data_addr[4], data_addr[5]); // 读取平移
         focal = data_addr[6];
         k1 = data_addr[7];
         k2 = data_addr[8];
     }
 
-    /// 将估计值放入内存
-    void set_to(double *data_addr) {
+    /// 将估计值放入内存 与上面反向
+    void set_to(double *data_addr) { 
         auto r = rotation.log();
         for (int i = 0; i < 3; ++i) data_addr[i] = r[i];
         for (int i = 0; i < 3; ++i) data_addr[i + 3] = translation[i];
@@ -168,7 +168,7 @@ void SolveBA(BALProblem &bal_problem) {
         v->setId(i + bal_problem.num_cameras());
         v->setEstimate(Vector3d(point[0], point[1], point[2]));
         // g2o在BA中需要手动设置待Marg的顶点
-        v->setMarginalized(true);
+        v->setMarginalized(true); // 很重要！！！ 这里是 xp， 我们进行舒尔消元
         optimizer.addVertex(v);
         vertex_points.push_back(v);
     }
@@ -185,7 +185,7 @@ void SolveBA(BALProblem &bal_problem) {
     }
 
     optimizer.initializeOptimization();
-    optimizer.optimize(40);
+    optimizer.optimize(100);
 
     // set to bal problem
     for (int i = 0; i < bal_problem.num_cameras(); ++i) {

@@ -46,7 +46,8 @@ int main(int argc, char **argv) {
   Mat R, t;
   pose_estimation_2d2d(keypoints_1, keypoints_2, matches, R, t);
 
-  //-- 验证E=t^R*scale
+  //-- 验证E=t^R*scale 
+  // 构造反对称矩阵 
   Mat t_x =
     (Mat_<double>(3, 3) << 0, -t.at<double>(2, 0), t.at<double>(1, 0),
       t.at<double>(2, 0), 0, -t.at<double>(0, 0),
@@ -127,25 +128,25 @@ void pose_estimation_2d2d(std::vector<KeyPoint> keypoints_1,
   Mat K = (Mat_<double>(3, 3) << 520.9, 0, 325.1, 0, 521.0, 249.7, 0, 0, 1);
 
   //-- 把匹配点转换为vector<Point2f>的形式
-  vector<Point2f> points1;
+  vector<Point2f> points1; // 之前类型是 keypoint
   vector<Point2f> points2;
-
+ 
   for (int i = 0; i < (int) matches.size(); i++) {
-    points1.push_back(keypoints_1[matches[i].queryIdx].pt);
+    points1.push_back(keypoints_1[matches[i].queryIdx].pt); // .pt：取出该特征点的二维像素坐标，类型是 Point2f。
     points2.push_back(keypoints_2[matches[i].trainIdx].pt);
   }
 
   //-- 计算基础矩阵
   Mat fundamental_matrix;
   // OpenCV 4 将八点法常量放入 cv 命名空间，算法仍为原来的八点法。
-  fundamental_matrix = findFundamentalMat(points1, points2, cv::FM_8POINT);
+  fundamental_matrix = findFundamentalMat(points1, points2, cv::FM_8POINT); // cv::FM_7POINT 还有  cv::FM_RANSAC 
   cout << "fundamental_matrix is " << endl << fundamental_matrix << endl;
 
   //-- 计算本质矩阵
   Point2d principal_point(325.1, 249.7);  //相机光心, TUM dataset标定值
   double focal_length = 521;      //相机焦距, TUM dataset标定值
   Mat essential_matrix;
-  essential_matrix = findEssentialMat(points1, points2, focal_length, principal_point);
+  essential_matrix = findEssentialMat(points1, points2, focal_length, principal_point); // 默认使用的是 cv::RANSAC
   cout << "essential_matrix is " << endl << essential_matrix << endl;
 
   //-- 计算单应矩阵
@@ -154,7 +155,7 @@ void pose_estimation_2d2d(std::vector<KeyPoint> keypoints_1,
   homography_matrix = findHomography(points1, points2, RANSAC, 3);
   cout << "homography_matrix is " << endl << homography_matrix << endl;
 
-  //-- 从本质矩阵中恢复旋转和平移信息.
+  //-- 从 本质矩阵中 恢复旋转和平移信息.
   // 此函数仅在Opencv3中提供
   recoverPose(essential_matrix, points1, points2, R, t, focal_length, principal_point);
   cout << "R is " << endl << R << endl;

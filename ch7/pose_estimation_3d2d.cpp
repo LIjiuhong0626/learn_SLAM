@@ -65,15 +65,15 @@ int main(int argc, char **argv) {
   // IMREAD_UNCHANGED 保留原始深度与通道数，等价于旧的 CV_LOAD_IMAGE_UNCHANGED。
   Mat d1 = imread(argv[3], cv::IMREAD_UNCHANGED);       // 深度图为16位无符号数，单通道图像
   Mat K = (Mat_<double>(3, 3) << 520.9, 0, 325.1, 0, 521.0, 249.7, 0, 0, 1);
-  vector<Point3f> pts_3d;
-  vector<Point2f> pts_2d;
+  vector<Point3f> pts_3d; //第一张图像对应的三维点
+  vector<Point2f> pts_2d; // 第二张图像对应的二维像素点
   for (DMatch m:matches) {
-    ushort d = d1.ptr<unsigned short>(int(keypoints_1[m.queryIdx].pt.y))[int(keypoints_1[m.queryIdx].pt.x)];
+    ushort d = d1.ptr<unsigned short>(int(keypoints_1[m.queryIdx].pt.y))[int(keypoints_1[m.queryIdx].pt.x)]; // 取深度图第 y 行、第 x 列的像素值
     if (d == 0)   // bad depth
       continue;
     float dd = d / 5000.0;
     Point2d p1 = pixel2cam(keypoints_1[m.queryIdx].pt, K);
-    pts_3d.push_back(Point3f(p1.x * dd, p1.y * dd, dd));
+    pts_3d.push_back(Point3f(p1.x * dd, p1.y * dd, dd)); // 恢复三维坐标
     pts_2d.push_back(keypoints_2[m.trainIdx].pt);
   }
 
@@ -188,10 +188,10 @@ void bundleAdjustmentGaussNewton(
     cost = 0;
     // compute cost
     for (int i = 0; i < points_3d.size(); i++) {
-      Eigen::Vector3d pc = pose * points_3d[i];
+      Eigen::Vector3d pc = pose * points_3d[i]; // 提取三维点， 转换到当前坐标系
       double inv_z = 1.0 / pc[2];
       double inv_z2 = inv_z * inv_z;
-      Eigen::Vector2d proj(fx * pc[0] / pc[2] + cx, fy * pc[1] / pc[2] + cy);
+      Eigen::Vector2d proj(fx * pc[0] / pc[2] + cx, fy * pc[1] / pc[2] + cy); // 变成当前参数下的像素
 
       Eigen::Vector2d e = points_2d[i] - proj;
 
@@ -211,7 +211,7 @@ void bundleAdjustmentGaussNewton(
         -fy * pc[0] * inv_z;
 
       H += J.transpose() * J;
-      b += -J.transpose() * e;
+      b += -J.transpose() * e; // 这里为啥可以这样， 见笔记
     }
 
     Vector6d dx;
